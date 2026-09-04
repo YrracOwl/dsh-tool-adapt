@@ -1,0 +1,40 @@
+{
+  "name": "dsh-tool-adapt",
+  "version": "0.2.1",
+  "description": "Adaptation layer for foreign models in DSH web (guard: remove+strip escalation params in dead states; L2 conventions; L0 loop fuse; composer pill hidden by default behind a Settings toggle). Official bundle form: host half wires the pipeline + /api/tool-adapt/* RPC; client half is a __ModuleLoader__ web bundle.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.1"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": ["@deepseek-ai/dsh-api-remotes"]
+    }
+  },
+  "repository": { "type": "git", "url": "git+https://github.com/YrracOwl/dsh-tool-adapt.git" },
+  "homepage": "https://github.com/YrracOwl/dsh-tool-adapt#readme",
+  "bugs": { "url": "https://github.com/YrracOwl/dsh-tool-adapt/issues" },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

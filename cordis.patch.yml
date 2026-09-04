@@ -1,0 +1,12 @@
+# dsh-tool-adapt bundle patch
+#
+# Mounts the host half (pipeline wiring + /api/tool-adapt/* RPC) + client half
+# (web bundle). The `configFile` config tells the host where the JSON config
+# lives; it is resolved against the profile working directory and defaults to
+# <cwd>/plugins/tool-adapt.config.json when absent, so existing profile configs
+# migrate unchanged.
+- insert:
+    - id: tool-adapt
+      name: 'dsh-tool-adapt'
+      config:
+        configFile: 'plugins/tool-adapt.config.json'
