@@ -17,7 +17,8 @@ test('client registers an official-style expandable plugin card', () => {
   assert.match(source, /放弃修改/)
   assert.match(source, /已覆盖/)
   assert.match(source, /恢复默认/)
-  assert.match(source, /exports\.inject = \['slots', 'settingsScope', 'connection'\]/)
+  assert.match(source, /exports\.inject = \['slots', 'settingsScope'\]/)
+  assert.doesNotMatch(source, /exports\.inject = \['slots', 'settingsScope', 'connection'\]/)
 })
 
 test('card stages edits and writes through settings.mutate', () => {

@@ -1,6 +1,6 @@
 {
   "name": "dsh-tool-adapt",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "EN: Compatibility and safety adaptation layer for non-DeepSeek models in DeepSeek Harness Web. ZH: 面向 DeepSeek Harness Web 非 DeepSeek 模型的兼容与安全适配层。",
   "type": "module",
   "main": "lib/index.js",
