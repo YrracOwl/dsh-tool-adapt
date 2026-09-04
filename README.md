@@ -2,6 +2,8 @@
 
 ## English
 
+**Current release: 0.2.2** — Remote settings are capability-detected and optional, so older DSH RC hosts continue to start the plugin.
+
 A compatibility and safety adaptation layer for non-DeepSeek model families in DeepSeek Harness Web. It guards dead escalation states, injects model-family conventions, fuses repeated failures, and provides a lifecycle-safe Settings card and optional composer pill. Its DSH 0.1.2+ `remote.settings` path falls back to the legacy connection API on older RC hosts.
 
 ## 中文
