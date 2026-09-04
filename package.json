@@ -1,7 +1,7 @@
 {
   "name": "dsh-tool-adapt",
   "version": "0.2.1",
-  "description": "Adaptation layer for foreign models in DSH web (guard: remove+strip escalation params in dead states; L2 conventions; L0 loop fuse; composer pill hidden by default behind a Settings toggle). Official bundle form: host half wires the pipeline + /api/tool-adapt/* RPC; client half is a __ModuleLoader__ web bundle.",
+  "description": "EN: Compatibility and safety adaptation layer for non-DeepSeek models in DeepSeek Harness Web. ZH: 面向 DeepSeek Harness Web 非 DeepSeek 模型的兼容与安全适配层。",
   "type": "module",
   "main": "lib/index.js",
   "exports": {

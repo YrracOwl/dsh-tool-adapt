@@ -1,5 +1,13 @@
 # dsh-tool-adapt
 
+## English
+
+A compatibility and safety adaptation layer for non-DeepSeek model families in DeepSeek Harness Web. It guards dead escalation states, injects model-family conventions, fuses repeated failures, and provides a lifecycle-safe Settings card and optional composer pill. Its DSH 0.1.2+ `remote.settings` path falls back to the legacy connection API on older RC hosts.
+
+## 中文
+
+面向 DeepSeek Harness Web 非 DeepSeek 模型族的兼容与安全适配层：处理不可升级权限状态、注入模型族惯例、熔断连续失败，并提供生命周期安全的设置卡片与可选输入框胶囊。DSH 0.1.2+ 使用 `remote.settings`，旧版 RC 自动回退到 connection API。
+
 Adaptation layer for foreign models in DSH web — official bundle form
 (host pipeline wiring + `__ModuleLoader__` client, no tapIndex injection).
 
