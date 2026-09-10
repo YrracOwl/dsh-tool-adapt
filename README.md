@@ -2,7 +2,7 @@
 
 ## English
 
-**Current release: 0.2.3** — Remote settings are capability-detected and optional, so older DSH RC hosts continue to start the plugin.
+**Current release: 0.2.6** — Remote settings are capability-detected and optional, so older DSH RC hosts continue to start the plugin. This release adds a documented install path: `dsh plugin --profile web add dsh-tool-adapt`.
 
 A compatibility and safety adaptation layer for non-DeepSeek model families in DeepSeek Harness Web. It guards dead escalation states, injects model-family conventions, fuses repeated failures, and provides a lifecycle-safe Settings card and optional composer pill. Its DSH 0.1.2+ `remote.settings` path falls back to the legacy connection API on older RC hosts.
 
@@ -44,8 +44,19 @@ in the same tab).
 
 ## Install
 
-Add to the profile's `package.json` dependencies (`link:` for local dev) and
-to `dsh.profile.bundles`, then `pnpm install` and restart `dsh web`.
+```powershell
+dsh plugin --profile web add dsh-tool-adapt
+```
+
+Restart the existing DSH Web process afterwards: the Host scans the browser plugin roster at startup, so the Settings card and the optional pill appear only after that restart. Then open **Settings → Plugins → ADAPT**; the「显示状态胶囊」switch (`ui.pill`, default `false`) owns the composer pill's visibility.
+
+Local development, from this package directory:
+
+```powershell
+dsh plugin --profile web add .
+```
+
+Either form records the package in the profile's `dsh.profile.bundles`, which is what mounts the Host half and serves the client bundle.
 
 ## Config
 
