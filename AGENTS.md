@@ -41,3 +41,7 @@ Then reconcile with `dsh plugin --profile web add .` and verify Settings → Plu
 - Settings writes are hot and affect the next prompt/tool boundary, not an already assembled request.
 - Do not infer permission state from prompt text; use the session fields consumed by the canonical predicate.
 - DSH overlays must cover the pill. A high z-index is a regression, not a fix.
+
+## Documentation
+
+- `README.md` is the only user-facing install surface: keep its recommended `dsh plugin --profile web add dsh-tool-adapt` command and the required DSH Web restart current whenever the install surface changes.
