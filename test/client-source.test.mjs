@@ -7,7 +7,8 @@ const source = fs.readFileSync(new URL('../lib/client.js', import.meta.url), 'ut
 // ── Settings card (behavior unchanged) ───────────────────────────────────────
 
 test('client registers an official-style expandable plugin card', () => {
-  assert.match(source, /settings\.plugin\.item/)
+  // 卡片必须在设置传输的子上下文上注册（sctx.slots），见 client.js 的 registerCard。
+  assert.match(source, /sctx\.slots\.inject\('settings\.plugin\.item'/)
   assert.match(source, /key: NS/)
   assert.match(source, /function SettingsCard/)
   assert.match(source, /e\('li'/)
@@ -17,7 +18,17 @@ test('client registers an official-style expandable plugin card', () => {
   assert.match(source, /放弃修改/)
   assert.match(source, /已覆盖/)
   assert.match(source, /恢复默认/)
-  assert.match(source, /exports\.inject = \['slots', 'settingsScope', 'remote', 'remote\.settings'\]/)
+  // NEITHER settings transport may appear in exports.inject: cordis treats every
+  // inject name as a REQUIRED gate, so declaring the optional transport leaves the
+  // plugin permanently pending and fails Web boot. The optional wait lives in
+  // apply as ctx.inject([...], cb).
+  assert.match(source, /exports\.inject = \['slots', 'remote', 'remote\.settings'\]/)
+  assert.match(source, /function resolveSettingsScopeFrom\(ctx, namespace\)/)
+  assert.match(source, /ctx\.inject\(\['settingsScope'\], registerCard\)/)
+  assert.match(source, /ctx\.inject\(\['configForms'\], \(sctx\) => \{ if \(scope === undefined\) registerCard\(sctx\) \}\)/)
+  assert.doesNotMatch(source, /exports\.inject = \[[^\]]*settingsScope/)
+  assert.doesNotMatch(source, /exports\.inject = \[[^\]]*configForms/)
+  assert.doesNotMatch(source, /ctx\.settingsScope\.bind/)
   assert.doesNotMatch(source, /exports\.inject = \['slots', 'settingsScope'\]/)
   assert.doesNotMatch(source, /exports\.inject = \['slots', 'settingsScope', 'connection'\]/)
 })
@@ -31,14 +42,23 @@ test('card stages edits and writes through settings.mutate', () => {
 })
 
 test('settings slot registration stays independent of seat waiting', () => {
-  assert.ok(source.indexOf("ctx.slots.inject('settings.plugin.item'") < source.indexOf('ctx.effect(() => startPill(scope)'))
-  assert.match(source, /return disposeSlot/)
+  // The Settings Slot must be registered before the pill starts, so a slow or
+  // absent composer seat can never delay or break「设置 → 插件」. The card now
+  // registers on the settings-transport child context, and the pill receives a
+  // scope GETTER (the transport is awaited non-blockingly).
+  assert.ok(
+    source.indexOf("sctx.slots.inject('settings.plugin.item'") < source.indexOf('ctx.effect(() => startPill(() => scope)'),
+    'the card is registered before the pill starts',
+  )
+  // Both slot disposers are released through one combined disposer, so stop /
+  // update / HMR leaves neither the card nor the overlay behind.
+  assert.match(source, /return \(\) => \{ for \(const dispose of disposeSlots\)/)
 })
 
 // ── pill mounting: seat-only, no body fallback ──────────────────────────────
 
 test('pill mounts only under the composer seat and waits for it', () => {
-  assert.match(source, /ctx\.effect\(\(\) => startPill\(scope\)/)
+  assert.match(source, /ctx\.effect\(\(\) => startPill\(\(\) => scope\)/)
   assert.match(source, /function findSeat\(\)/)
   assert.match(source, /document\.querySelector\('\[data-composer-seat\]'\)/)
   assert.match(source, /function ensureMounted\(\)/)
