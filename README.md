@@ -2,7 +2,7 @@
 
 ## English
 
-**Current release: 0.2.6** — Remote settings are capability-detected and optional, so older DSH RC hosts continue to start the plugin. This release adds a documented install path: `dsh plugin --profile web add dsh-tool-adapt`.
+**Current release: 0.2.7** — Portable settings transport: the plugin now resolves its settings scope on both the `settingsScope` (≤ 0.1.5) and `configForms` (≥ 0.1.7-rc.1) hosts, so the Settings card and pill switch keep working across the rename.
 
 A compatibility and safety adaptation layer for non-DeepSeek model families in DeepSeek Harness Web. It guards dead escalation states, injects model-family conventions, fuses repeated failures, and provides a lifecycle-safe Settings card and optional composer pill. Its DSH 0.1.2+ `remote.settings` path falls back to the legacy connection API on older RC hosts.
 
