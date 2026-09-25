@@ -34,6 +34,10 @@ That card registers on both settings seats DSH has used: the legacy
 `<package name>#<row id>`) on ≥ 0.1.7-rc.2, where the **插件** panel (the first
 sidebar panel icon) shows a
 configure control for the row only while that exact key is registered.
+`@deepseek-ai/schemastery` is a private `dependencies` entry whose floor must be
+≥ 3.18.4 (`^3.18.4`): the profile hoists an older line (3.18.2) that satisfies a
+lower floor, and an entry whose Config exposes no volatile field is dropped from
+`SettingsForms.describe()` — the card then renders nothing with no error.
 A legacy `plugins/tool-adapt.config.json` is migrated once if the
 settings user layer is empty; the old file is kept for rollback. The
 `GET/POST /api/tool-adapt/status|set` routes remain as a compatibility
