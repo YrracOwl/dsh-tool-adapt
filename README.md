@@ -31,7 +31,8 @@ disclosure chrome as Shell / Agent loop) becomes the writable source of truth.
 That card registers on both settings seats DSH has used: the legacy
 `settings.plugin.item` (key `tool-adapt`) on ≤ 0.1.5, and the keyed row seat
 `plugins.row.config` (key `dsh-tool-adapt#tool-adapt`, i.e.
-`<package name>#<row id>`) on ≥ 0.1.7-rc.2, where the Plugins page shows a
+`<package name>#<row id>`) on ≥ 0.1.7-rc.2, where the **插件** panel (the first
+sidebar panel icon) shows a
 configure control for the row only while that exact key is registered.
 A legacy `plugins/tool-adapt.config.json` is migrated once if the
 settings user layer is empty; the old file is kept for rollback. The
@@ -41,7 +42,8 @@ one of the chat input's four corners (drag to switch); the anchor is
 remembered in `localStorage` (`dsh.toolAdapt.anchor`). The pill mounts inside
 the composer seat (same stacking level as the input box) at a normal
 `z-index`, so DSH web popups (modal / menu / toast) can cover it. The pill
-itself is status-only — edit the full form under Settings → Plugins. The
+itself is status-only — edit the full form in the **插件** panel (on ≤ 0.1.5:
+Settings → Plugins). The
 pill is hidden by DEFAULT: the「显示状态胶囊」switch (`ui.pill`, default
 `false`) at the top of the ADAPT card owns its visibility, and the pill
 follows the hot `/status` config within one poll (or instantly after a save
@@ -53,7 +55,7 @@ in the same tab).
 dsh plugin --profile web add dsh-tool-adapt
 ```
 
-Restart the existing DSH Web process afterwards: the Host scans the browser plugin roster at startup, so the Settings card and the optional pill appear only after that restart. Then open the ADAPT card — on ≤ 0.1.5 it is a card in **Settings → Plugins**, on ≥ 0.1.7-rc.2 it is the `tool-adapt` row's configure control on the Plugins page; the「显示状态胶囊」switch (`ui.pill`, default `false`) owns the composer pill's visibility.
+Restart the existing DSH Web process afterwards: the Host scans the browser plugin roster at startup, so the Settings card and the optional pill appear only after that restart. Then open the ADAPT card — on ≤ 0.1.5 it is a card in **Settings → Plugins**; on ≥ 0.1.7-rc.2 open the **插件** panel (the first sidebar panel icon), find the `dsh-tool-adapt` bundle, and use the `tool-adapt` row's configure control; the「显示状态胶囊」switch (`ui.pill`, default `false`) owns the composer pill's visibility.
 
 Local development, from this package directory:
 
