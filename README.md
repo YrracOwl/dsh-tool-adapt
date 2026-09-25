@@ -26,9 +26,14 @@ them run with the fields stripped (strip) — no error, no loop.
   veto.
 
 Config is hot. When Host `ctx.settings` is available the plugin registers the
-`tool-adapt` namespace and an official-style expandable Settings Card
-(`settings.plugin.item` / key `tool-adapt`, same disclosure chrome as
-Shell / Agent loop) becomes the writable source of truth. A legacy `plugins/tool-adapt.config.json` is migrated once if the
+`tool-adapt` namespace and an official-style expandable Settings Card (same
+disclosure chrome as Shell / Agent loop) becomes the writable source of truth.
+That card registers on both settings seats DSH has used: the legacy
+`settings.plugin.item` (key `tool-adapt`) on ≤ 0.1.5, and the keyed row seat
+`plugins.row.config` (key `dsh-tool-adapt#tool-adapt`, i.e.
+`<package name>#<row id>`) on ≥ 0.1.7-rc.2, where the Plugins page shows a
+configure control for the row only while that exact key is registered.
+A legacy `plugins/tool-adapt.config.json` is migrated once if the
 settings user layer is empty; the old file is kept for rollback. The
 `GET/POST /api/tool-adapt/status|set` routes remain as a compatibility
 surface (loopback + same-origin fenced, 8 KiB body cap). The pill snaps to
@@ -48,7 +53,7 @@ in the same tab).
 dsh plugin --profile web add dsh-tool-adapt
 ```
 
-Restart the existing DSH Web process afterwards: the Host scans the browser plugin roster at startup, so the Settings card and the optional pill appear only after that restart. Then open **Settings → Plugins → ADAPT**; the「显示状态胶囊」switch (`ui.pill`, default `false`) owns the composer pill's visibility.
+Restart the existing DSH Web process afterwards: the Host scans the browser plugin roster at startup, so the Settings card and the optional pill appear only after that restart. Then open the ADAPT card — on ≤ 0.1.5 it is a card in **Settings → Plugins**, on ≥ 0.1.7-rc.2 it is the `tool-adapt` row's configure control on the Plugins page; the「显示状态胶囊」switch (`ui.pill`, default `false`) owns the composer pill's visibility.
 
 Local development, from this package directory:
 

@@ -135,3 +135,32 @@ test('pill keeps z-index 1, storage key, and 5s status polling semantics', () =>
   assert.match(source, /POLL_MS = 5000/)
   assert.match(source, /setInterval\(pollPill, POLL_MS\)/)
 })
+
+// ── rc.2 settings seat: DSH 0.1.7-rc.2 REMOVED settings.plugin.item ──────────
+
+test('the card also registers on the rc.2 row seat with the exact ledger key', () => {
+  // The key IS the contract. The official plugin-manager renders a row's configure
+  // control only while `rowConfigKey(pkg.name, row.rowId)` — `${pkg.name}#${rowId}`,
+  // with the row id this package's own cordis.patch.yml declares — sits on the
+  // `plugins.row.config` ledger. A card left on the removed seat renders nowhere
+  // and reports nothing, so both the seat and the derivation are guarded here.
+  const manifest = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
+  const patch = fs.readFileSync(new URL('../cordis.patch.yml', import.meta.url), 'utf8')
+  const rowIds = [...patch.matchAll(/^\s*- id: (\S+)\s*$/gm)].map((match) => match[1])
+  assert.ok(rowIds.includes('tool-adapt'), `cordis.patch.yml must declare the tool-adapt row; saw ${rowIds.join(', ')}`)
+  const expected = `${manifest.name}#tool-adapt`
+  assert.equal(expected, 'dsh-tool-adapt#tool-adapt')
+  assert.ok(
+    source.includes(`const ROW_CONFIG_KEY = '${expected}'`),
+    `client.js must carry the ledger key derived from package.json#name plus the patch row id (${expected})`,
+  )
+  assert.match(source, /sctx\.slots\.inject\('plugins\.row\.config'/)
+  assert.match(source, /name: 'plugins\.row\.config'/)
+  assert.match(source, /key: ROW_CONFIG_KEY/)
+  assert.match(source, /props\.view === 'summary'/)
+  assert.match(source, /ctx\.inject\(\['slots'\], registerRowConfig\)/)
+  // The ≤ 0.1.5 seat stays declared: each slot fires only where the host declares it.
+  assert.match(source, /settings\.plugin\.item/)
+  // One read path, one write path: the host-owned optional `form` prop is not consumed.
+  assert.doesNotMatch(source, /props\.form/)
+})
