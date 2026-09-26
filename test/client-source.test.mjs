@@ -278,12 +278,13 @@ test('settings.section fires without any settings transport and never gates', ()
   assert.equal(section.options.order, 61)
   assert.equal(typeof section.options.label, 'function')
   assert.equal(section.options.label(), 'YOTK · ADAPT')
-  // the registration is owned by the plugin: the callback's returned disposer is
-  // pushed onto disposeSlots, so apply's own disposer releases it. (The row seat
-  // predates disposeSlots and hands its disposer back to ctx.inject instead.)
+  // BOTH seat registrations are owned by the plugin: each callback pushes the
+  // disposer its `slots.inject` returned onto disposeSlots, so apply's own
+  // disposer releases every seat this host declared — no seat may ride a separate
+  // disposal path (the row seat used to hand its disposer back to ctx.inject).
   assert.deepEqual(disposals, [], 'nothing is released before the plugin is disposed')
   dispose()
-  assert.deepEqual(disposals, ['settings.section'])
+  assert.deepEqual(disposals, ['plugins.row.config', 'settings.section'])
 
   // A host that does not declare the seat: nothing registers there and apply
   // still succeeds, so the seat can never gate activation.
