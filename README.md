@@ -34,6 +34,10 @@ That card registers on both settings seats DSH has used: the legacy
 `<package name>#<row id>`) on ≥ 0.1.7-rc.2, where the **插件** panel (the first
 sidebar panel icon) shows a
 configure control for the row only while that exact key is registered.
+The same card is also registered, additively and never as a gate, on the
+root-scope `settings.section` list seat — identity `YOTK · ADAPT`, id
+`yotk-tool-adapt`, order `61` — so on a host that declares that seat it is a
+first-class page one click deep in 设置.
 `@deepseek-ai/schemastery` is a private `dependencies` entry whose floor must be
 ≥ 3.18.4 (`^3.18.4`): the profile hoists an older line (3.18.2) that satisfies a
 lower floor, and an entry whose Config exposes no volatile field is dropped from
