@@ -54,6 +54,28 @@ them run with the fields stripped (strip) — no error, no loop.
   already classified as `CONTEXT_WINDOW_EXCEEDED` is deliberately not reported:
   that is a genuine overflow whose fix is a smaller route `contextWindow`, not a
   role pin.
+- **surface-overflow recovery** — `api.commandcode.ai` (the baseURL behind both
+  the `commandcode` and `goat-163` routes) refuses a whole request once its
+  internal path-expansion budget is spent. Measured against the live gateway on
+  2026-09-30: the budget is 512 candidates consumed at ~2 per tool call, so a
+  request that replays more than ~256 tool calls answers
+  `400 a single path expansion cannot exceed 512 candidates` — 200 calls pass and
+  300 fail, while file paths in the text, image count, `max_tokens` and body size
+  (tested to 2 MB) are all irrelevant. DSH resends the whole surface every turn,
+  so once a session crosses the cap every later turn dies the same way and the
+  session can never recover on its own. `dsh-compaction-basic` already owns the
+  recovery for the one code that means "the replayed surface is too large"
+  (`CONTEXT_WINDOW_EXCEEDED`: compact the prefix into a checkpoint, then re-issue
+  the step), and pi-ai cannot classify this wording — it names a gateway budget,
+  not the model's window — so the failure is born `INVALID_REQUEST`. This half
+  registers its `agent/request-error` listener with `prepend: true`, ahead of
+  `dsh-compaction-basic`'s append, relabels exactly that signature into
+  `CONTEXT_WINDOW_EXCEEDED` for the duration of the waterfall, and restores the
+  original code on every exit (retry, decline and throw alike). It writes no
+  configuration: the `网关 surface 超限自动恢复` switch
+  (`surfaceOverflow.autoRelabel`, default **on**) turns it off, and
+  `GET /api/tool-adapt/status` (`surfaceOverflow.relabeled` /
+  `surfaceOverflow.last`) plus the ADAPT card report the recoveries.
 
 Config is hot. When Host `ctx.settings` is available the plugin registers the
 `tool-adapt` namespace and an official-style expandable Settings Card (same

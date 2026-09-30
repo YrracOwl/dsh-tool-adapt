@@ -27,8 +27,14 @@ test('entry Config is declared on the exported apply (static Config)', () => {
   // namespace, so the plugin VALUE is the same object that carries `apply`.
   assert.equal(typeof apply.Config, 'function')
   assert.equal(apply.Config.type, 'object')
-  const liveKeys = ['guard', 'l2', 'l0', 'ui', 'gateway']
+  const liveKeys = ['guard', 'l2', 'l0', 'ui', 'gateway', 'surfaceOverflow']
   for (const key of liveKeys) assert.ok(key in apply.Config.dict, 'Config has ' + key)
+  // Exhaustive on purpose: a new live section must be added to `liveKeys` (and to
+  // the nesting assertions below), so one can never ship without a settings form.
+  assert.deepEqual(
+    Object.keys(apply.Config.dict).filter((key) => key !== 'configFile').sort(),
+    liveKeys.slice().sort(),
+  )
   // The row field must be part of the entry schema too, or the mounting row's
   // `configFile` would not survive parsing on the declarative host.
   assert.ok('configFile' in apply.Config.dict, 'Config has configFile')
@@ -37,6 +43,7 @@ test('entry Config is declared on the exported apply (static Config)', () => {
   for (const key of ['enabled', 'excludeModels', 'block']) assert.ok(key in apply.Config.dict.l2.dict, 'l2.' + key)
   for (const key of ['enabled', 'remindAfter', 'vetoAfter', 'reminderText', 'vetoText']) assert.ok(key in apply.Config.dict.l0.dict, 'l0.' + key)
   assert.ok('pill' in apply.Config.dict.ui.dict)
+  assert.ok('autoRelabel' in apply.Config.dict.surfaceOverflow.dict)
 })
 
 test('Config leaves carry the same defaults as the shipped config', () => {
@@ -52,6 +59,7 @@ test('Config leaves carry the same defaults as the shipped config', () => {
   assert.equal(meta('l0', 'vetoText').default, DEFAULT_CONFIG.l0.vetoText)
   assert.equal(meta('ui', 'pill').default, DEFAULT_CONFIG.ui.pill)
   assert.equal(meta('gateway', 'autoRepair').default, DEFAULT_CONFIG.gateway.autoRepair)
+  assert.equal(meta('surfaceOverflow', 'autoRelabel').default, DEFAULT_CONFIG.surfaceOverflow.autoRelabel)
   assert.equal(apply.Config.dict.configFile.meta.default, 'plugins/tool-adapt.config.json')
 })
 
@@ -89,6 +97,7 @@ test('volatile is applied capability-detected, never unconditionally', () => {
       'l0.vetoText',
       'ui.pill',
       'gateway.autoRepair',
+      'surfaceOverflow.autoRelabel',
     ]) {
       assert.ok(marked.includes(leaf), 'volatile leaf marked: ' + leaf)
     }
@@ -104,7 +113,7 @@ test('volatile is applied capability-detected, never unconditionally', () => {
   // time. `Schema.resolve` runs the library's own `validateVolatileSchema`, so it
   // is the oracle here: if any nesting rule were violated this would throw, on
   // both library lines (the 3.18.1 checker is a no-op when nothing is marked).
-  for (const section of ['guard', 'l2', 'l0', 'ui', 'gateway']) {
+  for (const section of ['guard', 'l2', 'l0', 'ui', 'gateway', 'surfaceOverflow']) {
     assert.ok(!marked.includes(section), 'section must not be volatile: ' + section)
   }
   assert.ok(!marked.includes('configFile'), 'configFile is a row field, not a settings field')
@@ -300,6 +309,17 @@ test('ui.pill defaults to false and accepts explicit booleans only', () => {
   assert.equal(bad.ok, false)
   const badSection = validateConfig({ ui: 'on' })
   assert.equal(badSection.ok, false)
+})
+
+test('surfaceOverflow.autoRelabel defaults to ON and accepts booleans only', () => {
+  // The recovery is not a config write and the failure it rescues is otherwise
+  // fatal, so it ships enabled; the switch exists to turn it off deliberately.
+  assert.equal(DEFAULT_CONFIG.surfaceOverflow.autoRelabel, true)
+  assert.equal(validateConfig(DEFAULT_CONFIG).config.surfaceOverflow.autoRelabel, true)
+  assert.equal(validateConfig({}).config.surfaceOverflow.autoRelabel, true)
+  assert.equal(validateConfig({ surfaceOverflow: { autoRelabel: false } }).config.surfaceOverflow.autoRelabel, false)
+  assert.equal(validateConfig({ surfaceOverflow: { autoRelabel: 'yes' } }).ok, false)
+  assert.equal(validateConfig({ surfaceOverflow: 'on' }).ok, false)
 })
 
 test('unknown top-level keys are rejected', () => {
