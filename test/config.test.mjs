@@ -27,7 +27,7 @@ test('entry Config is declared on the exported apply (static Config)', () => {
   // namespace, so the plugin VALUE is the same object that carries `apply`.
   assert.equal(typeof apply.Config, 'function')
   assert.equal(apply.Config.type, 'object')
-  const liveKeys = ['guard', 'l2', 'l0', 'ui']
+  const liveKeys = ['guard', 'l2', 'l0', 'ui', 'gateway']
   for (const key of liveKeys) assert.ok(key in apply.Config.dict, 'Config has ' + key)
   // The row field must be part of the entry schema too, or the mounting row's
   // `configFile` would not survive parsing on the declarative host.
@@ -51,6 +51,7 @@ test('Config leaves carry the same defaults as the shipped config', () => {
   assert.equal(meta('l0', 'reminderText').default, DEFAULT_CONFIG.l0.reminderText)
   assert.equal(meta('l0', 'vetoText').default, DEFAULT_CONFIG.l0.vetoText)
   assert.equal(meta('ui', 'pill').default, DEFAULT_CONFIG.ui.pill)
+  assert.equal(meta('gateway', 'autoRepair').default, DEFAULT_CONFIG.gateway.autoRepair)
   assert.equal(apply.Config.dict.configFile.meta.default, 'plugins/tool-adapt.config.json')
 })
 
@@ -87,6 +88,7 @@ test('volatile is applied capability-detected, never unconditionally', () => {
       'l0.reminderText',
       'l0.vetoText',
       'ui.pill',
+      'gateway.autoRepair',
     ]) {
       assert.ok(marked.includes(leaf), 'volatile leaf marked: ' + leaf)
     }
@@ -102,7 +104,7 @@ test('volatile is applied capability-detected, never unconditionally', () => {
   // time. `Schema.resolve` runs the library's own `validateVolatileSchema`, so it
   // is the oracle here: if any nesting rule were violated this would throw, on
   // both library lines (the 3.18.1 checker is a no-op when nothing is marked).
-  for (const section of ['guard', 'l2', 'l0', 'ui']) {
+  for (const section of ['guard', 'l2', 'l0', 'ui', 'gateway']) {
     assert.ok(!marked.includes(section), 'section must not be volatile: ' + section)
   }
   assert.ok(!marked.includes('configFile'), 'configFile is a row field, not a settings field')

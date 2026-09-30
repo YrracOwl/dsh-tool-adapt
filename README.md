@@ -24,6 +24,36 @@ them run with the fields stripped (strip) — no error, no loop.
   excludes `deepseek-*`).
 - **L0** — consecutive-failure loop fuse: remind after N failures, optional
   veto.
+- **gateway compat** — passive diagnosis for the `developer`-role rejection.
+  DSH lets pi-ai pick the system-message role at dispatch
+  (`model.reasoning && compat.supportsDeveloperRole` → `developer`), and pi-ai
+  auto-detects only the vendors its own catalog ships — so an unknown gateway
+  receives `developer` and, if it rejects that shape, answers HTTP 422
+  `invalid_request_error`. Because the history is fixed, every retry rebuilds
+  the same rejected request and the session wedges permanently. This half
+  observes `agent/request-error`, recognizes that signature (including the real
+  adapter shape, where the numeric 422 lives in the message and never in
+  `failure.status`), and names the exact one-line fix:
+
+  ```yaml
+  providers:
+    <route>:
+      compat:
+        supportsDeveloperRole: false
+  ```
+
+  It reports rather than acts on its own: the finding surfaces on
+  `GET /api/tool-adapt/status` (`gateway.summary`, `gateway.findings[].fix`) and
+  in the ADAPT card, which also offers **「应用修复」** — a one-click write of that
+  single key through the host's own config editor (`configEditor.edit`, which
+  validates and reconciles it on the normal Loader path). The unattended path is
+  the `网关 compat 自动修复` switch (`gateway.autoRepair`, default **off**), which
+  runs at most once per route per process. Either way the change is exactly one
+  key on one already-declared route: it refuses a route that already pins the
+  role, or one whose `api` is not `openai-completions`. A failure the harness
+  already classified as `CONTEXT_WINDOW_EXCEEDED` is deliberately not reported:
+  that is a genuine overflow whose fix is a smaller route `contextWindow`, not a
+  role pin.
 
 Config is hot. When Host `ctx.settings` is available the plugin registers the
 `tool-adapt` namespace and an official-style expandable Settings Card (same
